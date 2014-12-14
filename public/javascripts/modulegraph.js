@@ -1,19 +1,20 @@
 var width = 960,
-    height = 500,
+    height = 900,
     color = d3.scale.category20(); //random color palette maybe?
 
 
-d3.json("/javascripts/corsBiddingStats.json", function(error, json) {
+d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
 
 	if (error) return console.warn(error);
 
 	var nodesData = _.each(json, function(item) {
-		item.radius = item.LowestSuccessfulBid/2;
+		item.radius = item["AveragePoints"]/50;
+    item.fontsize = 5 + item.radius/5;
   })
 
   // the physics
     var force = d3.layout.force()
-    			.gravity(0.09)
+    			.gravity(0.05)
     			.charge(function(d, i) { return i ? 0 : -2000; })
     			.nodes(nodesData)
     			.size([width, height]);
@@ -39,7 +40,7 @@ d3.json("/javascripts/corsBiddingStats.json", function(error, json) {
    			.enter().append("text")
 		   		.attr("text-anchor", "middle")
 		  		.attr("font-family", "sans-serif")
-		  		.attr("font-size", "20px")
+		  		.attr("font-size", function(d) {return d.fontsize;})
 		  		.attr("fill", "black")
 		  		.text(function(d) {return d.ModuleCode;});
 
