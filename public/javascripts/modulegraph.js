@@ -1,50 +1,54 @@
-var width = 960,
+var width = 1000,
     height = 900,
-    color = d3.scale.category20(); //random color palette maybe?
-
+    color = d3.scale.category20(), //random color palette maybe?
+    toggle = false;
 
 d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
 
-	if (error) return console.warn(error);
+    if (error) return console.warn(error);
 
-	var nodesData = _.each(json, function(item) {
-		item.radius = item["AveragePoints"]/50;
+    var nodesData = _.each(json, function(item) {
+        item.radius = item["AveragePoints"]/50;
     item.fontsize = 5 + item.radius/5;
   })
 
   // the physics
     var force = d3.layout.force()
-    			.gravity(0.05)
-    			.charge(function(d, i) { return i ? 0 : -2000; })
-    			.nodes(nodesData)
-    			.size([width, height]);
+                .gravity(0.05)
+                .charge(function(d, i) { return i ? 0 : -2000; })
+                .nodes(nodesData)
+                .size([width, height]);
 
     force.start();
 
     var svgContainer = d3.select("body").append("svg")
-    				.attr("width", width)
-    				.attr("height", height);
+                    .attr("width", width)
+                    .attr("height", height);
 
     var circle = svgContainer.append("g")
-    			.attr("class", "nodes")
-    			.selectAll(".circle")
-    				.data(nodesData)
-    			.enter().append("circle")
-   					.attr("r", function(d) {return d.radius;})
-   					.style("fill", function(d, i) { return color(i % 20);});
-   	
-   	var text = svgContainer.append("g")
-   				.attr("class", "labels")
-   			.selectAll("text")
-   				.data(nodesData)
-   			.enter().append("text")
-		   		.attr("text-anchor", "middle")
-		  		.attr("font-family", "sans-serif")
-		  		.attr("font-size", function(d) {return d.fontsize;})
-		  		.attr("fill", "black")
-		  		.text(function(d) {return d.ModuleCode;});
+                .attr("class", "nodes")
+                .selectAll(".circle")
+                    .data(nodesData)
+                .enter().append("circle")
+                    .attr("r", function(d) {return d.radius;})
+                    .style("fill", function(d, i) { return color(i % 20);})
+                    .call(force.drag);
+
+    
+    var text = svgContainer.append("g")
+                .attr("class", "labels")
+            .selectAll("text")
+                .data(nodesData)
+            .enter().append("text")
+                .attr("text-anchor", "middle")
+                .attr("font-family", "sans-serif")
+                .attr("font-size", function(d) {return d.fontsize;})
+                .attr("fill", "black")
+                .text(function(d) {return d.ModuleCode;})
+                .call(force.drag);
 
 
+    circle.on('click', moduleDetail);
   
 
   //what occurs in every step of the animation
@@ -54,21 +58,31 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
         n = nodesData.length; //number of nodes
 
     while (++i < n)
-    	q.visit(collide(nodesData[i])); //visit each node in quad tree
+        q.visit(collide(nodesData[i])); //visit each node in quad tree
 
     circle.attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
 
     text.attr("x", function(d) {return d.x;})
-    	.attr("y", function(d) {return d.y;});
+        .attr("y", function(d) {return d.y;});
 
   });
 
+    function moduleDetail() {
+        if (!toggle) {
+            //Reduce opacity of other nodes
+   //         d = d3.select(this)
 
-  //Collision detection function.
-  //without it, nodes would overlap
-  function collide(node) {  
-    var r = node.radius + 25, //add buffer distance for collision
+        } else {
+
+        }
+    }
+
+
+    //Collision detection function.
+    //without it, nodes would overlap
+    function collide(node) {  
+        var r = node.radius + 25, //add buffer distance for collision
         nx1 = node.x - r,
         nx2 = node.x + r,
         ny1 = node.y - r,
