@@ -12,9 +12,9 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
     item.fontsize = 5 + item.radius/5;
   })
 
-  // the physics
+    // the physics
     var force = d3.layout.force()
-                .gravity(0.05)
+                .gravity(0.045)
                 .charge(function(d, i) { return i ? 0 : -2000; })
                 .nodes(nodesData)
                 .size([width, height]);
@@ -25,6 +25,37 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
                     .attr("width", width)
                     .attr("height", height);
 
+    var tip = d3.tip()
+        .attr("class", "d3-tip")
+        .html(function(d) {return d["ModuleTitle"];});
+
+    var vis = d3.select("body")
+        .append("svg")
+        .call(tip);
+
+    var elem = svgContainer.selectAll("g")
+        .data(nodesData);
+
+    var elemEnter = elem.enter()
+        .append("g")
+        .on('mouseover', tip.show)
+        .on('mousedown', tip.hide)
+        .on('mouseout', tip.hide);
+
+    var circle = elemEnter.append("circle")
+        .attr("r", function(d) {return d.radius;})
+        .style("fill", function(d, i) { return color(i % 20);})
+        .call(force.drag);
+       
+
+    var text = elemEnter.append("text")
+        .attr("text-anchor", "middle")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", function(d) {return d.fontsize;})
+        .attr("fill", "black")
+        .text(function(d) {return d["ModuleCode"];});
+                
+        /*
     var circle = svgContainer.append("g")
                 .attr("class", "nodes")
                 .selectAll(".circle")
@@ -32,7 +63,10 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
                 .enter().append("circle")
                     .attr("r", function(d) {return d.radius;})
                     .style("fill", function(d, i) { return color(i % 20);})
-                    .call(force.drag);
+                    .call(force.drag)
+                    .on('mouseover', tip.show)
+                    .on('mousedown', tip.hide)
+                    .on('mouseout', tip.hide);
 
     
     var text = svgContainer.append("g")
@@ -45,28 +79,41 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
                 .attr("font-size", function(d) {return d.fontsize;})
                 .attr("fill", "black")
                 .text(function(d) {return d.ModuleCode;})
-                .call(force.drag);
+                .call(force.drag);*/
 
-
-    circle.on('click', moduleDetail);
+   // circle.on('click', moduleDetail);
   
+    var span = d3.select("body").append("span")
+        .attr("class", "tooltip");
 
   //what occurs in every step of the animation
-  force.on("tick", function() {
-    var q = d3.geom.quadtree(nodesData), //q is a quadtree factory
-        i = 0, 
-        n = nodesData.length; //number of nodes
+    force.on("tick", function() {
+        var q = d3.geom.quadtree(nodesData), //q is a quadtree factory
+            i = 0, 
+            n = nodesData.length; //number of nodes
 
-    while (++i < n)
-        q.visit(collide(nodesData[i])); //visit each node in quad tree
+        while (++i < n)
+            q.visit(collide(nodesData[i])); //visit each node in quad tree
 
-    circle.attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
+        circle.attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; });
 
-    text.attr("x", function(d) {return d.x;})
-        .attr("y", function(d) {return d.y;});
+        text.attr("x", function(d) {return d.x;})
+            .attr("y", function(d) {return d.y;});
 
   });
+
+    function mouseover() {
+        div.transition()
+            .duration(500)
+            .style("opacity", 1);
+    }
+
+    function mouseout() {
+        div.transition()
+            .duration(500)
+            .style("opacity", 0);
+    }
 
     function moduleDetail() {
         if (!toggle) {
