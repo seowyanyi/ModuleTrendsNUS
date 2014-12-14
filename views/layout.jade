@@ -3,10 +3,15 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/foundation.min.css')
+    link(rel='stylesheet', href='/stylesheets/d3.css')
     script(src='http://d3js.org/d3.v3.min.js')
-    script(src='/vendor/underscore-min.js')
+    script(src='/javascripts/vendor/d3tip.js')
+    script(src='/javascripts/vendor/jquery.js')
+    script(src='/javascripts/vendor/underscore-min.js')
+    script(src='/javascripts/vendor/foundation/foundation.min.js')
     
-  
+
   body
     block content
     script(src='/javascripts/modulegraph.js')
