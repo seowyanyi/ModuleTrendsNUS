@@ -1,6 +1,6 @@
 var width = 1000,
     height = 900,
-    color = d3.scale.category20(), //random color palette maybe?
+    color = d3.scale.category20(), 
     toggle = false;
 
 d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
@@ -8,8 +8,8 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
     if (error) return console.warn(error);
 
     var nodesData = _.each(json, function(item) {
-        item.radius = item["AveragePoints"]/50;
-    item.fontsize = 5 + item.radius/5;
+        item.radius = item.AveragePoints/50;
+        item.fontsize = 5 + item.radius/5;
   })
 
     // the physics
@@ -30,11 +30,11 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
         .offset([-10, 0])
         .html(function(d) {
             return "<strong>Module Title: </strong> <span style='color: orange'><b>"
-            + d["ModuleTitle"] + "</b></span>" 
+            + d.ModuleTitle + "</b></span>" 
             + "<p><strong>"
             + "<font color = 'white'>Average Bid Points: </font></strong>"
             + "<span style='color: orange'><b>" 
-            + d["AveragePoints"] + "</b></span></p>";
+            + d.AveragePoints + "</b></span></p>";
         });
 
     var vis = d3.select("body")
@@ -52,7 +52,7 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
 
     var circle = elemEnter.append("circle")
         .attr("r", function(d) {return d.radius;})
-        .style("fill", function(d, i) { return color(i % 20);})
+        .style("fill", function(d, i) { return color(i % 10);})
         .call(force.drag);
        
 
@@ -61,7 +61,7 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
         .attr("font-family", "sans-serif")
         .attr("font-size", function(d) {return d.fontsize;})
         .attr("fill", "black")
-        .text(function(d) {return d["ModuleCode"];});
+        .text(function(d) {return d.ModuleCode;});
 
    // circle.on('click', moduleDetail);
   
@@ -87,8 +87,7 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
   
     function moduleDetail() {
         if (!toggle) {
-            //Reduce opacity of other nodes
-   //         d = d3.select(this)
+    
 
         } else {
 
