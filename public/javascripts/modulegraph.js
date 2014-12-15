@@ -27,7 +27,15 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
 
     var tip = d3.tip()
         .attr("class", "d3-tip")
-        .html(function(d) {return d["ModuleTitle"];});
+        .offset([-10, 0])
+        .html(function(d) {
+            return "<strong>Module Title: </strong> <span style='color: orange'><b>"
+            + d["ModuleTitle"] + "</b></span>" 
+            + "<p><strong>"
+            + "<font color = 'white'>Average Bid Points: </font></strong>"
+            + "<span style='color: orange'><b>" 
+            + d["AveragePoints"] + "</b></span></p>";
+        });
 
     var vis = d3.select("body")
         .append("svg")
@@ -54,37 +62,10 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
         .attr("font-size", function(d) {return d.fontsize;})
         .attr("fill", "black")
         .text(function(d) {return d["ModuleCode"];});
-                
-        /*
-    var circle = svgContainer.append("g")
-                .attr("class", "nodes")
-                .selectAll(".circle")
-                    .data(nodesData)
-                .enter().append("circle")
-                    .attr("r", function(d) {return d.radius;})
-                    .style("fill", function(d, i) { return color(i % 20);})
-                    .call(force.drag)
-                    .on('mouseover', tip.show)
-                    .on('mousedown', tip.hide)
-                    .on('mouseout', tip.hide);
-
-    
-    var text = svgContainer.append("g")
-                .attr("class", "labels")
-            .selectAll("text")
-                .data(nodesData)
-            .enter().append("text")
-                .attr("text-anchor", "middle")
-                .attr("font-family", "sans-serif")
-                .attr("font-size", function(d) {return d.fontsize;})
-                .attr("fill", "black")
-                .text(function(d) {return d.ModuleCode;})
-                .call(force.drag);*/
 
    // circle.on('click', moduleDetail);
   
-    var span = d3.select("body").append("span")
-        .attr("class", "tooltip");
+
 
   //what occurs in every step of the animation
     force.on("tick", function() {
@@ -103,18 +84,7 @@ d3.json("/javascripts/data/abp1415-min.json", function(error, json) {
 
   });
 
-    function mouseover() {
-        div.transition()
-            .duration(500)
-            .style("opacity", 1);
-    }
-
-    function mouseout() {
-        div.transition()
-            .duration(500)
-            .style("opacity", 0);
-    }
-
+  
     function moduleDetail() {
         if (!toggle) {
             //Reduce opacity of other nodes
