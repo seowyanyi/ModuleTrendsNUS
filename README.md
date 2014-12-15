@@ -1,4 +1,4 @@
 ModuleTrendsNUS
 ===============
 
-A visualization of NUS modules
+Interactive visualization of NUS modules
